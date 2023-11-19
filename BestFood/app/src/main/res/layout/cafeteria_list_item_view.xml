@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/cafeteriaImage"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:scaleType="centerCrop"/>
+
+    <TextView
+        android:id="@+id/cafeteriaName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="店铺名称"
+        android:textSize="16sp"
+        android:paddingTop="4dp"/>
+
+    <TextView
+        android:id="@+id/cafeteriaRating"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="评价信息"
+        android:textSize="14sp"/>
+</LinearLayout>
