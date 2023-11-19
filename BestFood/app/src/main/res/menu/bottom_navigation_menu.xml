@@ -3,9 +3,10 @@
     <item
         android:id="@+id/navigation_list"
         android:title="List"
-        android:icon="@drawable/list_select" />
+        android:icon="@drawable/selector_navigation_list"
+        />
     <item
         android:id="@+id/navigation_about"
         android:title="About"
-        android:icon="@drawable/about_select" />
+        android:icon="@drawable/selector_navigation_about" />
 </menu>

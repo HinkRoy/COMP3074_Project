@@ -58,8 +58,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_add_restaurant) {
-            // 在这里处理 + 按钮点击事件
-            // 可以启动餐厅信息编辑页面的 Activity
+            startActivity(new Intent(MainActivity.this, CafeteriaInfoEditActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
