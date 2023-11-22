@@ -1,16 +1,75 @@
 package com.studen.bestfood;
 
-public class CafeteriaInfo {
-    private String name;
-    private String rating;
-    private String comment;
-    private int imageResId;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-    public CafeteriaInfo(String name, String rating, String comment, int imageResId) {
+import java.util.List;
+
+public class CafeteriaInfo implements Parcelable {
+    private String name;
+    private String phone;
+    private List<String> tags;
+    private String rating;
+    private String description;
+    private String imagePath;
+    private String location;
+    private double latitude;
+    private double longitude;
+
+    // Parcelable
+    protected CafeteriaInfo(Parcel in) {
+        name = in.readString();
+        phone = in.readString();
+        tags = in.createStringArrayList();
+        rating = in.readString();
+        description = in.readString();
+        imagePath = in.readString();
+        location = in.readString();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(phone);
+        dest.writeStringList(tags);
+        dest.writeString(rating);
+        dest.writeString(description);
+        dest.writeString(imagePath);
+        dest.writeString(location);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<CafeteriaInfo> CREATOR = new Creator<CafeteriaInfo>() {
+        @Override
+        public CafeteriaInfo createFromParcel(Parcel in) {
+            return new CafeteriaInfo(in);
+        }
+
+        @Override
+        public CafeteriaInfo[] newArray(int size) {
+            return new CafeteriaInfo[size];
+        }
+    };
+
+    public CafeteriaInfo(String name, String phone, List<String> tags, String rating,
+                         String description, String imagePath, String location, double latitude, double longitude) {
         this.name = name;
+        this.phone = phone;
+        this.tags = tags;
         this.rating = rating;
-        this.comment = comment;
-        this.imageResId = imageResId;
+        this.description = description;
+        this.imagePath = imagePath;
+        this.location = location;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public String getName() {
@@ -21,6 +80,22 @@ public class CafeteriaInfo {
         this.name = name;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
     public String getRating() {
         return rating;
     }
@@ -29,19 +104,44 @@ public class CafeteriaInfo {
         this.rating = rating;
     }
 
-    public String getComment() {
-        return comment;
+    public String getDescription() {
+        return description;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public int getImageResId() {
-        return imageResId;
+    public String getImagePath() {
+        return imagePath;
     }
 
-    public void setImageResId(int imageResId) {
-        this.imageResId = imageResId;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }
+

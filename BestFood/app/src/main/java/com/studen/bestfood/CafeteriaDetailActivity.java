@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,21 +32,27 @@ public class CafeteriaDetailActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        String name = getIntent().getStringExtra("CAFETERIA_NAME");
-        String rating = getIntent().getStringExtra("CAFETERIA_RATING");
-        String comment = getIntent().getStringExtra("CAFETERIA_COMMENT");
-        int imageResId = getIntent().getIntExtra("CAFETERIA_IMAGE_RES_ID", 0);
+        CafeteriaInfo cafeteriaInfo = getIntent().getParcelableExtra("CAFETERIA_INFO");
+        ImageView ivImage = findViewById(R.id.cafeteriaImage);
+//        if (cafeteriaInfo.getImagePath() == null || cafeteriaInfo.getImagePath().isEmpty()) {
+            ivImage.setImageResource(R.drawable.logo);
+//        } else {
+//            Bitmap bitmap = BitmapFactory.decodeFile(cafeteriaInfo.getImagePath());
+//            ivImage.setImageBitmap(bitmap);
+//        }
 
         TextView tvName = findViewById(R.id.tvCafeteriaName);
-        tvName.setText(name);
+        tvName.setText(cafeteriaInfo.getName());
         TextView tvRating = findViewById(R.id.tvCafeteriaRating);
-        tvRating.setText(rating);
-        TextView tvComment = findViewById(R.id.tvCafeteriaDescription);
-        tvComment.setText(comment);
-        ImageView imageView = findViewById(R.id.cafeteriaImage);
-        if (imageResId != 0) {
-            imageView.setImageResource(imageResId);
-        }
+        tvRating.setText(cafeteriaInfo.getRating());
+        TextView tvDescription = findViewById(R.id.tvCafeteriaDescription);
+        tvDescription.setText(cafeteriaInfo.getDescription());
+        TextView tvPhone = findViewById(R.id.tvCafeteriaPhone);
+        tvPhone.setText(cafeteriaInfo.getPhone());
+        TextView tvLocation = findViewById(R.id.tvCafeteriaLocation);
+        tvLocation.setText(cafeteriaInfo.getLocation());
+        TextView tvTags = findViewById(R.id.tvCafeteriaTags);
+        tvTags.setText(TextUtils.join(", ", cafeteriaInfo.getTags()));
     }
 
     @Override
@@ -55,9 +63,23 @@ public class CafeteriaDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_more) {
+        if (item.getItemId() == R.id.action_edit) {
+            // editor
+            return true;
+        } else if (item.getItemId() == R.id.action_delete) {
+            // delete
+            return true;
+        } else if (item.getItemId() == R.id.action_share_email) {
+            // share email
+            return true;
+        } else if (item.getItemId() == R.id.action_share_facebook) {
+            // share Facebook
+            return true;
+        } else if (item.getItemId() == R.id.action_share_twitter) {
+            // share Twitter
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
 }
