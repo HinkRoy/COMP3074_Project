@@ -77,6 +77,10 @@ public class CafeteriaInfo implements Parcelable {
         this.longitude = longitude;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }

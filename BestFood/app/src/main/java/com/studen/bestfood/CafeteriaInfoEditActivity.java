@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Arrays;
@@ -17,7 +19,8 @@ import java.util.concurrent.Executors;
 public class CafeteriaInfoEditActivity extends AppCompatActivity {
 
     EditText nameET, ratingET, descriptionET, phoneET, tagsET, locationNameET, longitudeET, latitudeT;
-
+    private int cafeteriaInfoId;
+    private CafeteriaInfo cafeteriaInfo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,12 +58,44 @@ public class CafeteriaInfoEditActivity extends AppCompatActivity {
                 return;
             }
 
-            CafeteriaInfo cafeteriaInfo = new CafeteriaInfo(name, phone, tags,
-                    rating, description, imagePath, locationName,
-                    Double.parseDouble(latitude), Double.parseDouble(longitude));
+            if (cafeteriaInfoId != -1){
+                cafeteriaInfo.setName(name);
+                cafeteriaInfo.setImagePath(imagePath);
+                cafeteriaInfo.setRating(rating);
+                cafeteriaInfo.setDescription(description);
+                cafeteriaInfo.setPhone(phone);
+                cafeteriaInfo.setTags(tags);
+                cafeteriaInfo.setLocation(locationName);
+                cafeteriaInfo.setLongitude(Double.parseDouble(longitude));
+                cafeteriaInfo.setLatitude(Double.parseDouble(latitude));
+            }else {
+                cafeteriaInfo = new CafeteriaInfo(name, phone, tags,
+                        rating, description, imagePath, locationName,
+                        Double.parseDouble(latitude), Double.parseDouble(longitude));
+            }
             saveCafeteriaInfo(cafeteriaInfo);
             finish();
         });
+
+        cafeteriaInfoId = getIntent().getIntExtra("CAFETERIA_INFO_ID", -1);
+        if (cafeteriaInfoId != -1) {
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Handler handler = new Handler(Looper.getMainLooper());
+            executor.execute(() -> {
+                AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+                cafeteriaInfo = db.cafeteriaInfoDao().findById(cafeteriaInfoId);
+                handler.post(() -> {
+                    nameET.setText(cafeteriaInfo.getName());
+                    ratingET.setText(cafeteriaInfo.getRating());
+                    descriptionET.setText(cafeteriaInfo.getDescription());
+                    phoneET.setText(cafeteriaInfo.getPhone());
+                    tagsET.setText(cafeteriaInfo.getTags());
+                    locationNameET.setText(cafeteriaInfo.getLocation());
+                    longitudeET.setText(String.valueOf(cafeteriaInfo.getLongitude()));
+                    latitudeT.setText(String.valueOf(cafeteriaInfo.getLatitude()));
+                });
+            });
+        }
     }
 
     private void saveCafeteriaInfo(CafeteriaInfo cafeteriaInfo) {
@@ -69,7 +104,11 @@ public class CafeteriaInfoEditActivity extends AppCompatActivity {
 
         executor.execute(() -> {
             AppDatabase db = AppDatabase.getInstance(getApplicationContext());
-            db.cafeteriaInfoDao().insert(cafeteriaInfo);
+            if (cafeteriaInfoId != -1) {
+                db.cafeteriaInfoDao().update(cafeteriaInfo);
+            } else {
+                db.cafeteriaInfoDao().insert(cafeteriaInfo);
+            }
             handler.post(() -> {
                 Toast.makeText(getApplicationContext(), "Data saved successfully", Toast.LENGTH_SHORT).show();
             });

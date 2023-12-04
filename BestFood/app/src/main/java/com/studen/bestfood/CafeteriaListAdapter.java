@@ -31,12 +31,11 @@ public class CafeteriaListAdapter extends RecyclerView.Adapter<CafeteriaListAdap
             cafeteriaTags = itemView.findViewById(R.id.cafeteriaTags);
 
             itemView.setOnClickListener(v -> {
-                // 点击事件处理逻辑
                 int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
                     CafeteriaInfo cafeteriaInfo = cafeteriaInfoList.get(position);
                     Intent intent = new Intent(itemView.getContext(), CafeteriaDetailActivity.class);
-                    intent.putExtra("CAFETERIA_INFO", cafeteriaInfo);
+                    intent.putExtra("CAFETERIA_INFO_ID", cafeteriaInfo.getId());
                     itemView.getContext().startActivity(intent);
                 }
             });
@@ -72,6 +71,12 @@ public class CafeteriaListAdapter extends RecyclerView.Adapter<CafeteriaListAdap
     @Override
     public int getItemCount() {
         return cafeteriaInfoList.size();
+    }
+
+    public void updateData(List<CafeteriaInfo> newData) {
+        cafeteriaInfoList.clear();
+        cafeteriaInfoList.addAll(newData);
+        notifyDataSetChanged();
     }
 }
 

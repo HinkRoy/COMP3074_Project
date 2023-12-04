@@ -7,14 +7,21 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CafeteriaDetailActivity extends AppCompatActivity {
 
+    private CafeteriaInfo cafeteriaInfo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,28 +38,44 @@ public class CafeteriaDetailActivity extends AppCompatActivity {
             Intent intent = new Intent(CafeteriaDetailActivity.this, MapActivity.class);
             startActivity(intent);
         });
+    }
 
-        CafeteriaInfo cafeteriaInfo = getIntent().getParcelableExtra("CAFETERIA_INFO");
-        ImageView ivImage = findViewById(R.id.cafeteriaImage);
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadData();
+    }
+
+    private void loadData() {
+        int cafeteriaInfoId = getIntent().getIntExtra("CAFETERIA_INFO_ID", -1);
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+            cafeteriaInfo = db.cafeteriaInfoDao().findById(cafeteriaInfoId);
+            handler.post(() -> {
+                ImageView ivImage = findViewById(R.id.cafeteriaImage);
 //        if (cafeteriaInfo.getImagePath() == null || cafeteriaInfo.getImagePath().isEmpty()) {
-            ivImage.setImageResource(R.drawable.logo);
+                ivImage.setImageResource(R.drawable.logo);
 //        } else {
 //            Bitmap bitmap = BitmapFactory.decodeFile(cafeteriaInfo.getImagePath());
 //            ivImage.setImageBitmap(bitmap);
 //        }
-
-        TextView tvName = findViewById(R.id.tvCafeteriaName);
-        tvName.setText(cafeteriaInfo.getName());
-        TextView tvRating = findViewById(R.id.tvCafeteriaRating);
-        tvRating.setText(cafeteriaInfo.getRating());
-        TextView tvDescription = findViewById(R.id.tvCafeteriaDescription);
-        tvDescription.setText(cafeteriaInfo.getDescription());
-        TextView tvPhone = findViewById(R.id.tvCafeteriaPhone);
-        tvPhone.setText(cafeteriaInfo.getPhone());
-        TextView tvLocation = findViewById(R.id.tvCafeteriaLocation);
-        tvLocation.setText(cafeteriaInfo.getLocation());
-        TextView tvTags = findViewById(R.id.tvCafeteriaTags);
-        tvTags.setText(cafeteriaInfo.getTags());
+                TextView tvName = findViewById(R.id.tvCafeteriaName);
+                tvName.setText("Name:\n"+cafeteriaInfo.getName());
+                TextView tvRating = findViewById(R.id.tvCafeteriaRating);
+                tvRating.setText("Rating:\n"+cafeteriaInfo.getRating());
+                TextView tvDescription = findViewById(R.id.tvCafeteriaDescription);
+                tvDescription.setText("Description:\n"+cafeteriaInfo.getDescription());
+                TextView tvPhone = findViewById(R.id.tvCafeteriaPhone);
+                tvPhone.setText("Phone:\n"+cafeteriaInfo.getPhone());
+                TextView tvLocation = findViewById(R.id.tvCafeteriaLocation);
+                tvLocation.setText("Location:\n"+cafeteriaInfo.getLocation());
+                TextView tvTags = findViewById(R.id.tvCafeteriaTags);
+                tvTags.setText("Tags:\n"+cafeteriaInfo.getTags());
+            });
+        });
     }
 
     @Override
@@ -65,9 +88,22 @@ public class CafeteriaDetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_edit) {
             // editor
+            Intent intent = new Intent(CafeteriaDetailActivity.this, CafeteriaInfoEditActivity.class);
+            intent.putExtra("CAFETERIA_INFO_ID", cafeteriaInfo.getId());
+            startActivity(intent);
             return true;
         } else if (item.getItemId() == R.id.action_delete) {
             // delete
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Handler handler = new Handler(Looper.getMainLooper());
+            executor.execute(() -> {
+                AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+                db.cafeteriaInfoDao().delete(cafeteriaInfo);
+                handler.post(() -> {
+                    finish();
+                });
+            });
+
             return true;
         } else if (item.getItemId() == R.id.action_share_email) {
             // share email
