@@ -28,21 +28,56 @@
         android:id="@+id/editTextCafeteriaName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Restaurant Name"
+        android:hint="Please enter the name of the restaurant"
         android:inputType="text"/>
 
     <EditText
         android:id="@+id/editTextCafeteriaRating"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Restaurant Ratings"
+        android:hint="Please enter a restaurant rating"
         android:inputType="numberDecimal"/>
 
     <EditText
         android:id="@+id/editTextCafeteriaDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Restaurant Description"
+        android:hint="Please enter a description of the restaurant"
+        android:inputType="textMultiLine"/>
+
+    <EditText
+        android:id="@+id/editTextCafeteriaPhone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Please enter the restaurant contact number"
+        android:inputType="phone"/>
+
+    <EditText
+        android:id="@+id/editTextCafeteriaTags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Please enter restaurant related tags"
+        android:inputType="textMultiLine"/>
+
+    <EditText
+        android:id="@+id/editTextCafeteriaLocationName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Please enter restaurant address information"
+        android:inputType="textMultiLine"/>
+
+    <EditText
+        android:id="@+id/editTextCafeteriaLongitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Please enter the longitude of the restaurant location"
+        android:inputType="textMultiLine"/>
+
+    <EditText
+        android:id="@+id/editTextCafeteriaLatitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Please enter the latitude of the restaurant location"
         android:inputType="textMultiLine"/>
 
     <Button

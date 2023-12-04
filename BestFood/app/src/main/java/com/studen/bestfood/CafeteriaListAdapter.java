@@ -59,7 +59,7 @@ public class CafeteriaListAdapter extends RecyclerView.Adapter<CafeteriaListAdap
         holder.cafeteriaName.setText(cafeteriaInfo.getName());
         holder.cafeteriaRating.setText(cafeteriaInfo.getRating());
         holder.cafeteriaDescription.setText(cafeteriaInfo.getDescription());
-        holder.cafeteriaTags.setText(TextUtils.join(",",cafeteriaInfo.getTags()));
+        holder.cafeteriaTags.setText(cafeteriaInfo.getTags());
 
 //        if (cafeteriaInfo.getImagePath() == null || cafeteriaInfo.getImagePath().isEmpty()) {
             holder.cafeteriaImage.setImageResource(R.drawable.logo);

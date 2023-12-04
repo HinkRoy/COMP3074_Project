@@ -52,7 +52,7 @@ public class CafeteriaDetailActivity extends AppCompatActivity {
         TextView tvLocation = findViewById(R.id.tvCafeteriaLocation);
         tvLocation.setText(cafeteriaInfo.getLocation());
         TextView tvTags = findViewById(R.id.tvCafeteriaTags);
-        tvTags.setText(TextUtils.join(", ", cafeteriaInfo.getTags()));
+        tvTags.setText(cafeteriaInfo.getTags());
     }
 
     @Override

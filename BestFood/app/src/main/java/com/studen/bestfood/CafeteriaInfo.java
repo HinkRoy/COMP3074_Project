@@ -3,12 +3,17 @@ package com.studen.bestfood;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.List;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+import java.util.List;
+@Entity
 public class CafeteriaInfo implements Parcelable {
+    @PrimaryKey(autoGenerate = true)
+    public int id;
     private String name;
     private String phone;
-    private List<String> tags;
+    private String tags;
     private String rating;
     private String description;
     private String imagePath;
@@ -20,7 +25,7 @@ public class CafeteriaInfo implements Parcelable {
     protected CafeteriaInfo(Parcel in) {
         name = in.readString();
         phone = in.readString();
-        tags = in.createStringArrayList();
+        tags = in.readString();
         rating = in.readString();
         description = in.readString();
         imagePath = in.readString();
@@ -33,7 +38,7 @@ public class CafeteriaInfo implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeString(phone);
-        dest.writeStringList(tags);
+        dest.writeString(tags);
         dest.writeString(rating);
         dest.writeString(description);
         dest.writeString(imagePath);
@@ -59,7 +64,7 @@ public class CafeteriaInfo implements Parcelable {
         }
     };
 
-    public CafeteriaInfo(String name, String phone, List<String> tags, String rating,
+    public CafeteriaInfo(String name, String phone, String tags, String rating,
                          String description, String imagePath, String location, double latitude, double longitude) {
         this.name = name;
         this.phone = phone;
@@ -88,11 +93,11 @@ public class CafeteriaInfo implements Parcelable {
         this.phone = phone;
     }
 
-    public List<String> getTags() {
+    public String getTags() {
         return tags;
     }
 
-    public void setTags(List<String> tags) {
+    public void setTags(String tags) {
         this.tags = tags;
     }
 
