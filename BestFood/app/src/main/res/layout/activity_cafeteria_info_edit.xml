@@ -71,14 +71,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Please enter the longitude of the restaurant location"
-        android:inputType="textMultiLine"/>
+        android:inputType="numberDecimal|numberSigned"/>
 
     <EditText
         android:id="@+id/editTextCafeteriaLatitude"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Please enter the latitude of the restaurant location"
-        android:inputType="textMultiLine"/>
+        android:inputType="numberDecimal|numberSigned"/>
 
     <Button
         android:id="@+id/buttonSave"

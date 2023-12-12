@@ -34,6 +34,7 @@ android {
 }
 
 dependencies {
+    implementation("com.facebook.android:facebook-android-sdk:latest.release")
     implementation("androidx.room:room-runtime:2.4.0")
     annotationProcessor("androidx.room:room-compiler:2.4.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
