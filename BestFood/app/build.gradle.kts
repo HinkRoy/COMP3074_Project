@@ -34,6 +34,7 @@ android {
 }
 
 dependencies {
+    implementation("com.google.android.gms:play-services-location:17.0.0")
     implementation("com.facebook.android:facebook-android-sdk:latest.release")
     implementation("androidx.room:room-runtime:2.4.0")
     annotationProcessor("androidx.room:room-compiler:2.4.0")
