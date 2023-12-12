@@ -3,6 +3,7 @@ package com.studen.bestfood;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -23,6 +24,9 @@ import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,6 +34,7 @@ import java.util.concurrent.Executors;
 public class CafeteriaDetailActivity extends AppCompatActivity {
 
     private CafeteriaInfo cafeteriaInfo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,12 +70,21 @@ public class CafeteriaDetailActivity extends AppCompatActivity {
             cafeteriaInfo = db.cafeteriaInfoDao().findById(cafeteriaInfoId);
             handler.post(() -> {
                 ImageView ivImage = findViewById(R.id.cafeteriaImage);
-//        if (cafeteriaInfo.getImagePath() == null || cafeteriaInfo.getImagePath().isEmpty()) {
-                ivImage.setImageResource(R.drawable.logo);
-//        } else {
-//            Bitmap bitmap = BitmapFactory.decodeFile(cafeteriaInfo.getImagePath());
-//            ivImage.setImageBitmap(bitmap);
-//        }
+//                if (cafeteriaInfo.getImagePath() == null || cafeteriaInfo.getImagePath().isEmpty()){
+//                    ivImage.setImageResource(R.drawable.logo);
+//                }else {
+//                    ivImage.setImageURI(Uri.parse(cafeteriaInfo.getImagePath()));
+//                }
+
+                File imgFile = new File(cafeteriaInfo.getImagePath());
+                if (imgFile.exists()) {
+                    Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                    ivImage.setImageBitmap(bitmap);
+                } else {
+                    ivImage.setImageResource(R.drawable.logo);
+                }
+
+
                 TextView tvName = findViewById(R.id.tvCafeteriaName);
                 tvName.setText("Name:\n"+cafeteriaInfo.getName());
                 TextView tvRating = findViewById(R.id.tvCafeteriaRating);

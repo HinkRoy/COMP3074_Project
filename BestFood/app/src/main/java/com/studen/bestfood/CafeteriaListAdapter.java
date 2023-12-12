@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.List;
 
 public class CafeteriaListAdapter extends RecyclerView.Adapter<CafeteriaListAdapter.ViewHolder> {
@@ -55,17 +59,17 @@ public class CafeteriaListAdapter extends RecyclerView.Adapter<CafeteriaListAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         CafeteriaInfo cafeteriaInfo = cafeteriaInfoList.get(position);
+        File imgFile = new File(cafeteriaInfo.getImagePath());
+        if (imgFile.exists()) {
+            Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            holder.cafeteriaImage.setImageBitmap(bitmap);
+        } else {
+            holder.cafeteriaImage.setImageResource(R.drawable.logo);
+        }
         holder.cafeteriaName.setText(cafeteriaInfo.getName());
         holder.cafeteriaRating.setText(cafeteriaInfo.getRating());
         holder.cafeteriaDescription.setText(cafeteriaInfo.getDescription());
         holder.cafeteriaTags.setText(cafeteriaInfo.getTags());
-
-//        if (cafeteriaInfo.getImagePath() == null || cafeteriaInfo.getImagePath().isEmpty()) {
-            holder.cafeteriaImage.setImageResource(R.drawable.logo);
-//        } else {
-//            Bitmap bitmap = BitmapFactory.decodeFile(cafeteriaInfo.getImagePath());
-//            holder.cafeteriaImage.setImageBitmap(bitmap);
-//        }
     }
 
     @Override

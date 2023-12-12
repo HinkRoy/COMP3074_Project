@@ -1,25 +1,40 @@
 package com.studen.bestfood;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
@@ -27,18 +42,37 @@ import java.util.concurrent.Executors;
 
 public class CafeteriaInfoEditActivity extends AppCompatActivity {
 
+    private ImageView cafeteriaImage;
+    private Uri selectedImageUri = null;
     EditText nameET, ratingET, descriptionET, phoneET, tagsET, locationNameET, longitudeET, latitudeT;
     private int cafeteriaInfoId;
 
     private LocationManager locationManager;
     private boolean shouldUpdateLocation = true;
     private CafeteriaInfo cafeteriaInfo;
+    private static final int GALLERY_REQUEST_CODE = 1;
+    private static final int LOCATION_REQUEST_CODE = 2;
+    private ActivityResultLauncher<String> mGetContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cafeteria_info_edit);
 
+        mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
+                new ActivityResultCallback<Uri>() {
+                    @Override
+                    public void onActivityResult(Uri uri) {
+                        if (uri != null) {
+                            cafeteriaImage.setImageURI(uri);
+                            selectedImageUri = uri;
+                        }
+                    }
+                });
+        cafeteriaImage = findViewById(R.id.cafeteriaImage);
+        cafeteriaImage.setOnClickListener(v -> {
+            mGetContent.launch("image/*");
+        });
         nameET = findViewById(R.id.editTextCafeteriaName);
         ratingET = findViewById(R.id.editTextCafeteriaRating);
         descriptionET = findViewById(R.id.editTextCafeteriaDescription);
@@ -55,7 +89,7 @@ public class CafeteriaInfoEditActivity extends AppCompatActivity {
 
         Button btnSave = findViewById(R.id.buttonSave);
         btnSave.setOnClickListener(v -> {
-            String imagePath = "Add photo function at the back";
+            String imagePath = selectedImageUri != null ? copyImageToAppStorage(selectedImageUri) : cafeteriaInfo.getImagePath().toString();
             String name = nameET.getText().toString().trim();
             String rating = ratingET.getText().toString().trim();
             String description = descriptionET.getText().toString().trim();
@@ -98,6 +132,13 @@ public class CafeteriaInfoEditActivity extends AppCompatActivity {
                 AppDatabase db = AppDatabase.getInstance(getApplicationContext());
                 cafeteriaInfo = db.cafeteriaInfoDao().findById(cafeteriaInfoId);
                 handler.post(() -> {
+                    File imgFile = new File(cafeteriaInfo.getImagePath());
+                    if (imgFile.exists()) {
+                        Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                        cafeteriaImage.setImageBitmap(bitmap);
+                    } else {
+                        cafeteriaImage.setImageResource(R.drawable.logo);
+                    }
                     nameET.setText(cafeteriaInfo.getName());
                     ratingET.setText(cafeteriaInfo.getRating());
                     descriptionET.setText(cafeteriaInfo.getDescription());
@@ -123,7 +164,7 @@ public class CafeteriaInfoEditActivity extends AppCompatActivity {
             if (ActivityCompat.checkSelfPermission(CafeteriaInfoEditActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(CafeteriaInfoEditActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(CafeteriaInfoEditActivity.this,
                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                        111);
+                        LOCATION_REQUEST_CODE);
                 return;
             }
             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -173,7 +214,7 @@ public class CafeteriaInfoEditActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 111) {
+        if (requestCode == LOCATION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             } else {
                 Toast.makeText(getApplicationContext(), "Please authorise location information", Toast.LENGTH_SHORT).show();
@@ -181,6 +222,26 @@ public class CafeteriaInfoEditActivity extends AppCompatActivity {
         }
     }
 
-
+    private String copyImageToAppStorage(Uri imageUri) {
+        try {
+            File storageDir = new File(getFilesDir(), "images");
+            if (!storageDir.exists()) storageDir.mkdirs();
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+            String imageFileName = "JPEG_" + timeStamp + ".jpg";
+            File imageFile = new File(storageDir, imageFileName);
+            try (InputStream in = getContentResolver().openInputStream(imageUri);
+                 OutputStream out = new FileOutputStream(imageFile)) {
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, len);
+                }
+            }
+            return imageFile.getAbsolutePath();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 }
