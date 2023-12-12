@@ -44,6 +44,7 @@ public class CafeteriaDetailActivity extends AppCompatActivity {
         ImageButton mapButton = findViewById(R.id.btnMap);
         mapButton.setOnClickListener(v -> {
             Intent intent = new Intent(CafeteriaDetailActivity.this, MapActivity.class);
+            intent.putExtra("CAFETERIA_INFO_ID", cafeteriaInfo.getId());
             startActivity(intent);
         });
     }
@@ -134,18 +135,15 @@ public class CafeteriaDetailActivity extends AppCompatActivity {
 
             return true;
         } else if (item.getItemId() == R.id.action_share_facebook) {
-//    
             String content = "Name: " + cafeteriaInfo.getName() + "\n" +
                     "Rating: " + cafeteriaInfo.getRating() + "\n" +
                     "Description: " + cafeteriaInfo.getDescription() + "\n" +
                     "Phone: " + cafeteriaInfo.getPhone() + "\n" +
                     "Location: " + cafeteriaInfo.getLocation() + "\n" +
                     "Tags: " + cafeteriaInfo.getTags() + "\n";
-
             Intent facebookIntent = new Intent(Intent.ACTION_SEND);
             facebookIntent.setType("text/plain");
             facebookIntent.putExtra(Intent.EXTRA_TEXT, content);
-
             boolean facebookAppFound = false;
             PackageManager packageManager = getPackageManager();
             List<ResolveInfo> list = packageManager.queryIntentActivities(facebookIntent, PackageManager.MATCH_DEFAULT_ONLY);
@@ -156,7 +154,6 @@ public class CafeteriaDetailActivity extends AppCompatActivity {
                     break;
                 }
             }
-
             if (facebookAppFound) {
                 startActivity(facebookIntent);
             } else {
@@ -164,7 +161,6 @@ public class CafeteriaDetailActivity extends AppCompatActivity {
                 Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(sharerUrl));
                 startActivity(webIntent);
             }
-
             return true;
         } else if (item.getItemId() == R.id.action_share_twitter) {
             String content = "Name: " + cafeteriaInfo.getName() + "\n" +
@@ -176,10 +172,8 @@ public class CafeteriaDetailActivity extends AppCompatActivity {
             Intent tweetIntent = new Intent(Intent.ACTION_SEND);
             tweetIntent.putExtra(Intent.EXTRA_TEXT, content);
             tweetIntent.setType("text/plain");
-
             PackageManager packManager = getPackageManager();
             List<ResolveInfo> resolvedInfoList = packManager.queryIntentActivities(tweetIntent, PackageManager.MATCH_DEFAULT_ONLY);
-
             boolean resolved = false;
             for (ResolveInfo resolveInfo : resolvedInfoList) {
                 if (resolveInfo.activityInfo.packageName.startsWith("com.twitter.android")) {
@@ -196,7 +190,6 @@ public class CafeteriaDetailActivity extends AppCompatActivity {
                 String tweetUrl = "https://twitter.com/intent/tweet?text=" + Uri.encode(content);
                 Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(tweetUrl));
                 startActivity(webIntent);
-
             }
             return true;
         }

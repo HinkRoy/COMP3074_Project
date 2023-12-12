@@ -1,18 +1,27 @@
 package com.studen.bestfood;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Arrays;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -20,7 +29,11 @@ public class CafeteriaInfoEditActivity extends AppCompatActivity {
 
     EditText nameET, ratingET, descriptionET, phoneET, tagsET, locationNameET, longitudeET, latitudeT;
     private int cafeteriaInfoId;
+
+    private LocationManager locationManager;
+    private boolean shouldUpdateLocation = true;
     private CafeteriaInfo cafeteriaInfo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +71,7 @@ public class CafeteriaInfoEditActivity extends AppCompatActivity {
                 return;
             }
 
-            if (cafeteriaInfoId != -1){
+            if (cafeteriaInfoId != -1) {
                 cafeteriaInfo.setName(name);
                 cafeteriaInfo.setImagePath(imagePath);
                 cafeteriaInfo.setRating(rating);
@@ -68,7 +81,7 @@ public class CafeteriaInfoEditActivity extends AppCompatActivity {
                 cafeteriaInfo.setLocation(locationName);
                 cafeteriaInfo.setLongitude(Double.parseDouble(longitude));
                 cafeteriaInfo.setLatitude(Double.parseDouble(latitude));
-            }else {
+            } else {
                 cafeteriaInfo = new CafeteriaInfo(name, phone, tags,
                         rating, description, imagePath, locationName,
                         Double.parseDouble(latitude), Double.parseDouble(longitude));
@@ -96,6 +109,48 @@ public class CafeteriaInfoEditActivity extends AppCompatActivity {
                 });
             });
         }
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+            }
+        };
+
+        Button btnLocation = findViewById(R.id.getLocationButton);
+        btnLocation.setOnClickListener(v -> {
+            if (ActivityCompat.checkSelfPermission(CafeteriaInfoEditActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(CafeteriaInfoEditActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(CafeteriaInfoEditActivity.this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                        111);
+                return;
+            }
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (location != null) {
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                longitudeET.setText(String.valueOf(longitude));
+                latitudeT.setText(String.valueOf(latitude));
+                Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+                try {
+                    List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                    if (addresses != null && !addresses.isEmpty()) {
+                        Address address = addresses.get(0);
+                        String addressName = address.getAddressLine(0);
+                        locationNameET.setText(addressName);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
     }
 
     private void saveCafeteriaInfo(CafeteriaInfo cafeteriaInfo) {
@@ -114,6 +169,18 @@ public class CafeteriaInfoEditActivity extends AppCompatActivity {
             });
         });
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 111) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            } else {
+                Toast.makeText(getApplicationContext(), "Please authorise location information", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
 
 }
