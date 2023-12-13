@@ -18,11 +18,11 @@ public class AboutFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_about, container, false);
         TextView personal_name = view.findViewById(R.id.personal_name);
-        personal_name.setText("HengZhou");
+        personal_name.setText("Heng Zhou \n101304724");
         TextView personal_profile = view.findViewById(R.id.personal_profile);
         personal_profile.setText("I am a passionate and excellence-seeking Computer Science student looking to apply my skills and knowledge to solving real-world problems and constantly improving myself. I look forward to collaborating with like-minded individuals and exploring the endless possibilities of computer science.");
         TextView personal_name_1 = view.findViewById(R.id.personal_name_1);
-        personal_name_1.setText("Bingye Liu");
+        personal_name_1.setText("Bingye Liu \n101370671");
         TextView personal_profile_1 = view.findViewById(R.id.personal_profile_1);
         personal_profile_1.setText("I am a passionate and excellence-seeking Computer Science student looking to apply my skills and knowledge to solving real-world problems and constantly improving myself. I look forward to collaborating with like-minded individuals and exploring the endless possibilities of computer science.");
         return view;
